@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DanielNet RFC 8305 test</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+    </head>
+<body>
+    <h1>Checking access to DanielNet (AS400688) using RFC 8305</h1>
+    <p id="result">Loading...</p>
+
+    <script>
+        fetch('https://crypto.cloudflare.com/cdn-cgi/trace')
+.then(response => response.text())
+.then(data => {
+    let ipLine = data.split('\n').find(line => line.startsWith('ip='));
+    let result;
+    if (ipLine) {
+        let ip = ipLine.replace('ip=', '');
+        if (ip.includes('.')) {
+            result = `
+            <h2>Fail: You don't have access to DanielNet (AS400688), or you have a broken IPv6 implementation.</h2>
+            <p>Note: Not all Internet Service Providers support IPv6. If you can't enable it on your router, contact your ISP. The following popular ISPs in the USA have known working IPv6 and have been tested on this website:</p>
+            <ol>
+                <li>
+                    Comcast Xfinity
+                </li>
+                <li>
+                    Charter Spectrum
+                </li>
+                <li>
+                    AT&T Internet (Includes AT&T Fiber and DSL service)
+                </li>
+                <li>
+                    US cellular providers (Verizon Wireless, T-Mobile US, AT&T Wireless)
+                </li>
+            </ol>
+            <p>If you have any of the above ISPs, it is likely you have installed your own network hardware (or software) that is blocking or ignoring IPv6. Please check your router's documentation on how to enable IPv6 for your ISP, or consider using the router provided by your ISP.</p>`;
+        } else {
+            result = `
+            <h2>Success! Your internet service can reach DanielNet services.</h2>
+            <p>This test verified the following:</p>
+            <ol>
+                <li>
+                    You have a route to the internet using IPv6 from this browser
+                </li>
+                <li>
+                    This device prefers using IPv6 (This is called Happy Eyeballs)
+                </li>
+                <li>
+                    This network is not blocked from reaching DanielNet services
+                </li>
+            </ol>
+            <p>Welcome to the modern internet!</p>`;
+        }
+    } else {
+        result = 'Error occurred, did you (or your browser) block access to crypto.cloudflare.com?';
+    }
+    const resultElement = document.getElementById('result');
+    if (resultElement) {
+        resultElement.innerHTML = result;
+    } else {
+        console.error('No element with id "result" found in the document.');
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+    const resultElement = document.getElementById('result');
+    if (resultElement) {
+        resultElement.textContent = 'Error occurred, did you (or your browser) block access to crypto.cloudflare.com?';
+    }
+});
+    </script>
+
+</body>
+<footer>
+    <p>This website is to check access to DanielNet services. If you do not have an IPv6 address, you will be unable to reach this IPv6-only ASN.</p>
+    </footer>
+</html>
